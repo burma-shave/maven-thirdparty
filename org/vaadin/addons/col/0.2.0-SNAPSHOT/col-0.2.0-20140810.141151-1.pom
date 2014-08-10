@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.vaadin.addons</groupId>
+  <artifactId>col</artifactId>
+  <version>0.2.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Contextual Object Lookup</name>
+  <description>
+    Contextual Object Lookup (COL) for Vaadin. Provides mechanisms for
+    inter-component communication and service layer integration.
+  </description>
+  <url>https://github.com/silb/col-vaadin</url>
+  <scm>
+    <connection>git://github.com/silb/col-vaadin.git</connection>
+    <developerConnection>git@github.com:silb/col-vaadin.git</developerConnection>
+    <url>https://github.com/silb/col-vaadin</url>
+  </scm>
+  <issueManagement>
+    <url>https://github.com/silb/col-vaadin/issues</url>
+  </issueManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <profiles>
+
+    <profile>
+      <id>vaadin-current</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <vaadin.version>7.2.3</vaadin.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>vaadin-old</id>
+      <!-- The oldest version of Vaadin that is supported. -->
+      <properties>
+        <vaadin.version>7.0.2</vaadin.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>vaadin-next</id>
+      <!-- For testing compatibility with the upcoming Vaadin release. -->
+      <properties>
+        <vaadin.version>7.3.0.alpha1</vaadin.version>
+      </properties>
+    </profile>
+
+  </profiles>
+
+  <build>
+    <finalName>col-vaadin-${project.version}</finalName>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.4.3</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.7.2</version>
+        <configuration>
+        <includes>
+          <include>**/*Test.java</include>
+          <include>**/*TestCase.java</include>
+        </includes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>${project.name}</Implementation-Title>
+              <Implementation-Version>${project.version}</Implementation-Version>
+              <Vaadin-Package-Version>1</Vaadin-Package-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/archive-descriptor.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <!-- A manifest for the Vaadin zip distribution -->
+                <mkdir dir="${project.build.directory}/vaadin-addon-archive/META-INF/"/>
+                <manifest file="${project.build.directory}/vaadin-addon-archive/META-INF/MANIFEST.MF">
+                  <attribute name="Implementation-Title" value="${project.name}"/>
+                  <attribute name="Implementation-Version" value="${project.version}"/>
+                  <attribute name="Vaadin-Package-Version" value="1"/>
+                  <attribute name="Vaadin-Addon" value="${project.build.finalName}/${project.build.finalName}.${project.packaging}"/>
+                </manifest>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <!-- Vaadin -->
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-server</artifactId>
+      <version>${vaadin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client-compiled</artifactId>
+      <version>${vaadin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-client</artifactId>
+      <version>${vaadin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-themes</artifactId>
+      <version>${vaadin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.22</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+</project>
