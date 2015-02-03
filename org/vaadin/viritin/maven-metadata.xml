@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.vaadin</groupId>
+  <artifactId>viritin</artifactId>
+  <versioning>
+    <versions>
+      <version>1.26-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20150203103037</lastUpdated>
+  </versioning>
+</metadata>
